@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #12294a;        /* headings, footer: authority */
+  --color-brand: #1b5faa;      /* links, accents: trust blue */
+  --color-brand-soft: #e8f0fa; /* tinted surfaces */
+  --color-go: #0f7a4f;         /* primary action: positive green */
+  --color-go-dark: #0b6341;
+  --color-gold: #f2a93b;       /* used once or twice, for highlights */
+  --color-paper: #f7fafd;      /* page background */
+  --color-line: #dce6f0;
+  --color-muted: #52627a;
+
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-gold);
+  outline-offset: 2px;
+}
