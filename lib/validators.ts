@@ -59,6 +59,15 @@ export const courseCreateSchema = z
   })
   .strict();
 
+export const courseQuerySchema = z.object({
+  level: z.enum(COURSE_LEVELS).optional(),
+  name: z.string().trim().min(1).optional(),
+  college: objectId.optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(50).default(12),
+});
+
+
 // ---------- Program ----------
 export const programCreateSchema = z
   .object({

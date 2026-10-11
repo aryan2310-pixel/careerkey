@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 
 const SITE_NAME = "CampusPath"; // TODO: replace with your brand name
 
@@ -28,21 +25,11 @@ export const metadata: Metadata = {
     "Read honest guides on colleges, courses, fees, placements and hostels. Book a counselling call and our team will phone you.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${figtree.variable} ${bricolage.variable}`}>
       <body className="min-h-screen flex flex-col antialiased overflow-x-hidden">
-        <Suspense
-          fallback={
-            <header className="sticky top-0 z-50 w-full border-b border-line bg-white h-16" />
-          }
-        >
-          <Navbar />
-        </Suspense>
-        <main className="flex-1">{children}</main>
-        <Footer />
+        {children}
       </body>
     </html>
   );
