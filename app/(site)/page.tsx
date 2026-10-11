@@ -1,18 +1,12 @@
 import Link from "next/link";
 
-// TODO: replace these with data from your /api/v1 routes once they're ready.
+// TODO: replace with data from /api/v1 routes once ready.
 const COURSES = ["BTech", "MTech", "MBA", "BBA", "BCA", "MBBS", "BA", "BCom"];
 
 const STEPS = [
   { title: "Fill the short form", body: "Your name, phone number and the course you're considering." },
   { title: "Our counsellor calls you", body: "We phone you to understand your marks, budget and city." },
   { title: "Get a shortlist", body: "Colleges that fit, with fees, placements and hostel details." },
-];
-
-const POSTS = [
-  { slug: "sample-post-1", title: "How to read a college's placement report", tag: "Placements" },
-  { slug: "sample-post-2", title: "Hostel life: what to check before you pay", tag: "Campus" },
-  { slug: "sample-post-3", title: "BTech fees explained: tuition vs. total cost", tag: "Fees" },
 ];
 
 const PROMISES = [
@@ -32,7 +26,7 @@ export default function HomePage() {
               Choose your college with facts, then talk to a real person.
             </h1>
             <p className="mt-5 max-w-xl text-lg text-muted">
-              Clear guides on courses, fees, placements and hostels. When you&aposre
+              Clear guides on courses, fees, placements and hostels. When you&apos;re
               ready to decide, leave your number and our counsellor will call you.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -98,29 +92,6 @@ export default function HomePage() {
             </div>
           ))}
         </div>
-      </section>
-
-      {/* Latest from the blog */}
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <div className="flex items-end justify-between gap-4">
-          <h2 className="text-2xl font-bold sm:text-3xl">Latest from the blog</h2>
-          <Link href="/blog" className="text-sm font-semibold text-brand hover:underline">
-            All articles
-          </Link>
-        </div>
-        <ul className="mt-8 grid gap-6 md:grid-cols-3">
-          {POSTS.map((post) => (
-            <li key={post.slug}>
-              <Link
-                href={`/blog/${post.slug}`}
-                className="flex h-full flex-col rounded-xl border border-line bg-white p-6 transition-colors hover:border-brand"
-              >
-                <span className="text-sm font-semibold text-go">{post.tag}</span>
-                <span className="mt-2 text-lg font-bold leading-snug">{post.title}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
       </section>
     </>
   );

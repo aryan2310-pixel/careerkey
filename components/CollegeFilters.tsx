@@ -28,7 +28,8 @@ export default function CollegeFilters({ cities, courses, state }: Props) {
     router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
   }
 
-  const hasFilters = searchParams.has("city") || searchParams.has("course");
+  const hasFilters =
+    searchParams.has("city") || searchParams.has("course") || searchParams.has("state");
   const selectClass =
     "rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink";
 

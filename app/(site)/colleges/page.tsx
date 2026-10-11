@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import CollegeCard from "@/components/CollegeCard";
+import CollegeFilters from "@/components/CollegeFilters";
 import { getColleges } from "@/lib/colleges";
 
 // Filtered URLs (?city=...) all point to /colleges as the main version,
@@ -13,7 +14,16 @@ export const metadata: Metadata = {
   alternates: { canonical: "/colleges" },
 };
 
-type SearchParams = Promise<{ city?: string; course?: string }>;
+const cities = ["Kolkata", "Delhi", "Mumbai", "Bengaluru", "Chennai"];
+const courses = ["BTech", "MTech", "MBA", "BBA", "BCA"];
+const stateList = ["Bihar", "West Bengal", "Delhi"];
+
+
+type SearchParams = Promise<{
+  city?: string;
+  course?: string;
+  state?: string;
+}>;
 
 export default function CollegesPage({
   searchParams,
@@ -21,20 +31,30 @@ export default function CollegesPage({
   searchParams: SearchParams;
 }) {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-3xl font-bold text-ink">Colleges</h1>
+    <>
+      <div className="sticky top-16 z-20 border-b border-line bg-white">
+        <div className="mx-auto max-w-6xl px-4 py-3">
+          <Suspense fallback={<div className="h-10" />}>
+            <CollegeFilters cities={cities} courses={courses} state={stateList} />
+          </Suspense>
+        </div>
+      </div>
 
-      {/* The list reads the URL filters, so it loads inside Suspense */}
-      <Suspense fallback={<ListSkeleton />}>
-        <CollegeList searchParams={searchParams} />
-      </Suspense>
-    </div>
+      <div className="mx-auto max-w-6xl px-4 py-10">
+        <h1 className="text-3xl font-bold text-ink">Colleges</h1>
+
+        {/* The list reads the URL filters, so it loads inside Suspense */}
+        <Suspense fallback={<ListSkeleton />}>
+          <CollegeList searchParams={searchParams} />
+        </Suspense>
+      </div>
+    </>
   );
 }
 
 async function CollegeList({ searchParams }: { searchParams: SearchParams }) {
-  const { city } = await searchParams;
-  const colleges = await getColleges({ city });
+  const { city, course, state } = await searchParams;
+  const colleges = await getColleges({ city, course, state });
 
   if (colleges.length === 0) {
     return (
