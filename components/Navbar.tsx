@@ -27,7 +27,7 @@ export default function Navbar() {
           transition={{ type: "spring", stiffness: 400, damping: 20 }}
         >
           <Link href="/" className="text-xl font-bold text-ink">
-            CampusPath
+            CareerKey
           </Link>
         </motion.div>
 

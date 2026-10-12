@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import "./globals.css";
 
-const SITE_NAME = "CampusPath"; // TODO: replace with your brand name
+const SITE_NAME = "CareerKey";
 
 const figtree = Figtree({
   subsets: ["latin"],

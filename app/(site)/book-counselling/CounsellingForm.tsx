@@ -2,18 +2,51 @@
 
 import { useState } from "react";
 
-export default function CounsellingForm() {
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
+const INPUT =
+  "w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none focus:border-brand";
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+export default function CounsellingForm() {
+  const [formData, setFormData] = useState({
+    fullName: "",
+    phone: "",
+    city: "",
+    course: "",
+    questions: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    // Simulate submission delay
-    setTimeout(() => {
-      setLoading(false);
+    setError("");
+
+    try {
+      const res = await fetch("/api/v1/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        throw new Error(data?.error || data?.issues?.[0]?.message || "Failed to submit");
+      }
+
       setSubmitted(true);
-    }, 600);
+    } catch (err: any) {
+      setError(err.message || "Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   if (submitted) {
@@ -30,31 +63,58 @@ export default function CounsellingForm() {
     );
   }
 
-  const inputClass =
-    "w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none focus:border-brand";
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <h2 className="text-xl font-bold text-ink">Book Your Free Call</h2>
 
       <div>
         <label className="block text-xs font-semibold text-slate-700">Full name</label>
-        <input required type="text" placeholder="Aarav Sharma" className={`mt-1 ${inputClass}`} />
+        <input
+          required
+          type="text"
+          name="fullName"
+          value={formData.fullName}
+          onChange={handleChange}
+          placeholder="Aarav Sharma"
+          className={`mt-1 ${INPUT}`}
+        />
       </div>
 
       <div>
         <label className="block text-xs font-semibold text-slate-700">Phone number</label>
-        <input required type="tel" placeholder="+91 98765 43210" className={`mt-1 ${inputClass}`} />
+        <input
+          required
+          type="tel"
+          name="phone"
+          value={formData.phone}
+          onChange={handleChange}
+          placeholder="+91 98765 43210"
+          className={`mt-1 ${INPUT}`}
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-semibold text-slate-700">City</label>
-          <input required type="text" placeholder="Kolkata" className={`mt-1 ${inputClass}`} />
+          <input
+            required
+            type="text"
+            name="city"
+            value={formData.city}
+            onChange={handleChange}
+            placeholder="Kolkata"
+            className={`mt-1 ${INPUT}`}
+          />
         </div>
         <div>
           <label className="block text-xs font-semibold text-slate-700">Course</label>
-          <select required defaultValue="" className={`mt-1 ${inputClass}`}>
+          <select
+            required
+            name="course"
+            value={formData.course}
+            onChange={handleChange}
+            className={`mt-1 ${INPUT}`}
+          >
             <option value="" disabled>Select</option>
             <option value="BTech">BTech</option>
             <option value="MBA">MBA</option>
@@ -70,10 +130,15 @@ export default function CounsellingForm() {
         <label className="block text-xs font-semibold text-slate-700">Questions (optional)</label>
         <textarea
           rows={3}
-          placeholder="e.g. Inquiring about cutoffs, fees, or hostel facilities..."
-          className={`mt-1 ${inputClass}`}
+          name="questions"
+          value={formData.questions}
+          onChange={handleChange}
+          placeholder="Inquiring about cutoffs, fees, or hostel facilities..."
+          className={`mt-1 ${INPUT}`}
         />
       </div>
+
+      {error && <p className="text-xs text-red-600 font-medium">{error}</p>}
 
       <button
         type="submit"
