@@ -4,6 +4,12 @@ import { getSession } from "@/lib/auth";
 
 const sections = [
   {
+    title: "Admissions & Inquiries",
+    actions: [
+      { href: "/admin-portal/leads", title: "Student Leads", desc: "View incoming counselling inquiries, call or WhatsApp students" },
+    ],
+  },
+  {
     title: "Colleges & Infrastructure",
     actions: [
       { href: "/admin-portal/colleges", title: "Manage Colleges", desc: "View, edit, or delete college profiles" },
