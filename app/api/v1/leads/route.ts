@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { connectDB } from "@/lib/db";
 import { Lead } from "@/models/Lead";
+import { sendLeadNotification } from "@/lib/notify";
 
 const leadSchema = z.object({
   fullName: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
@@ -42,6 +43,10 @@ export async function POST(req: NextRequest) {
 
   try {
     const lead = await Lead.create(result.data);
+
+    // Asynchronously dispatch instant notification to counselors (non-blocking)
+    sendLeadNotification(result.data).catch(() => {});
+
     return NextResponse.json(
       { message: "Lead submitted successfully", id: lead._id },
       { status: 201 }
