@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 // SEO: title, description and canonical URL for this page.
-// The title becomes "About us | CampusPath" through the template in layout.tsx.
+// The title becomes "About us | CareerKey" through the template in layout.tsx.
 export const metadata: Metadata = {
   title: "About us",
   description:
@@ -54,15 +54,15 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Our story: TODO replace with your real story and team details */}
+      {/* Our story */}
       <section className="border-y border-line bg-white">
         <div className="mx-auto max-w-4xl px-4 py-14">
-          <h2 className="text-2xl font-bold text-ink">Why we built this</h2>
-          <p className="mt-4 max-w-2xl text-muted">
-            {/* TODO: write 2-3 sentences about who you are and why you started. */}
-            Students often have to piece together fees, placements and campus
-            details from many scattered sources. We wanted one trustworthy
-            place for all of it, backed by people who answer the phone.
+          <h2 className="text-2xl font-bold text-ink">Why we built CareerKey</h2>
+          <p className="mt-4 max-w-2xl text-muted leading-relaxed">
+            Students and parents often have to piece together fees, cutoffs, and placement
+            figures from fragmented brochures and aggressive marketing claims. We created
+            CareerKey to deliver verifiable, transparent college data paired with genuine
+            counsellor guidance—helping families choose their path with confidence.
           </p>
         </div>
       </section>

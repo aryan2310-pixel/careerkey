@@ -2,22 +2,70 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const slugify = (s: string) =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 
 export default function NewInsightPage() {
+  const router = useRouter();
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
+  const [slugTouched, setSlugTouched] = useState(false);
   const [tag, setTag] = useState("Admissions");
   const [readTime, setReadTime] = useState("4 min read");
   const [summary, setSummary] = useState("");
   const [content, setContent] = useState("");
-  const [published, setPublished] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [created, setCreated] = useState<{ title: string; slug: string } | null>(null);
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setPublished(true);
+    setFormError("");
+    setErrors({});
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/admin-portal/insights", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          slug,
+          tag,
+          readTime,
+          summary,
+          content,
+        }),
+      });
+
+      const body = await res.json().catch(() => null);
+
+      if (res.status === 401) {
+        router.replace("/admin-portal/login");
+        return;
+      }
+
+      if (!res.ok) {
+        const fieldErrors: Record<string, string> = {};
+        for (const issue of body?.issues ?? []) {
+          if (issue.path) fieldErrors[issue.path] = issue.message;
+        }
+        setErrors(fieldErrors);
+        if (Object.keys(fieldErrors).length === 0) {
+          setFormError(body?.error || "Failed to create insight");
+        }
+        return;
+      }
+
+      setCreated({ title, slug });
+    } catch {
+      setFormError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   const inputClass =
@@ -34,15 +82,34 @@ export default function NewInsightPage() {
       </p>
 
       <div className="mt-6 max-w-2xl">
-        {published ? (
+        {created ? (
           <div className="rounded-xl border border-green-200 bg-green-50 p-6 text-sm text-green-900">
-            <h3 className="font-bold">Article Draft Ready!</h3>
+            <h3 className="font-bold text-base">Article Published!</h3>
             <p className="mt-1">
-              &quot;{title}&quot; has been recorded. You can view existing insights on the public site.
+              &quot;{created.title}&quot; is now live on the public site.
             </p>
-            <Link href="/insights" className="mt-4 inline-block font-semibold text-brand underline">
-              View Insights Page →
-            </Link>
+            <div className="mt-4 flex gap-4 font-semibold">
+              <Link href={`/insights/${created.slug}`} target="_blank" className="text-brand underline">
+                View Live Article →
+              </Link>
+              <Link href="/insights" className="text-slate-700 underline">
+                All Insights
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setCreated(null);
+                  setTitle("");
+                  setSlug("");
+                  setSlugTouched(false);
+                  setSummary("");
+                  setContent("");
+                }}
+                className="text-brand underline"
+              >
+                + Write Another
+              </button>
+            </div>
           </div>
         ) : (
           <form onSubmit={onSubmit} className="space-y-4 rounded-xl border border-line bg-white p-6 shadow-sm">
@@ -54,10 +121,11 @@ export default function NewInsightPage() {
                 value={title}
                 onChange={(e) => {
                   setTitle(e.target.value);
-                  setSlug(slugify(e.target.value));
+                  if (!slugTouched) setSlug(slugify(e.target.value));
                 }}
                 className={`mt-1 ${inputClass}`}
               />
+              {errors.title && <p className="mt-1 text-xs text-red-600">{errors.title}</p>}
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -66,9 +134,13 @@ export default function NewInsightPage() {
                 <input
                   required
                   value={slug}
-                  onChange={(e) => setSlug(slugify(e.target.value))}
+                  onChange={(e) => {
+                    setSlugTouched(true);
+                    setSlug(slugify(e.target.value));
+                  }}
                   className={`mt-1 ${inputClass}`}
                 />
+                {errors.slug && <p className="mt-1 text-xs text-red-600">{errors.slug}</p>}
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-700">Tag / Category</label>
@@ -101,6 +173,7 @@ export default function NewInsightPage() {
                 onChange={(e) => setSummary(e.target.value)}
                 className={`mt-1 ${inputClass}`}
               />
+              {errors.summary && <p className="mt-1 text-xs text-red-600">{errors.summary}</p>}
             </div>
 
             <div>
@@ -113,13 +186,17 @@ export default function NewInsightPage() {
                 onChange={(e) => setContent(e.target.value)}
                 className={`mt-1 ${inputClass}`}
               />
+              {errors.content && <p className="mt-1 text-xs text-red-600">{errors.content}</p>}
             </div>
+
+            {formError && <p className="text-sm text-red-600">{formError}</p>}
 
             <button
               type="submit"
-              className="rounded-lg bg-slate-900 px-5 py-2 text-sm font-medium text-white hover:bg-slate-800"
+              disabled={loading}
+              className="rounded-lg bg-slate-900 px-5 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60"
             >
-              Publish Guide
+              {loading ? "Publishing..." : "Publish Guide"}
             </button>
           </form>
         )}

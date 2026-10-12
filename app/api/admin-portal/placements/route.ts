@@ -3,8 +3,30 @@ import { connectDB } from "@/lib/db";
 import { Placement } from "@/models/Placement";
 import { Program } from "@/models/Program";
 import { Course } from "@/models/Course";
+import "@/models/College";
 import { requireAdmin, unauthorized } from "@/lib/auth";
 
+// GET /api/admin-portal/placements
+export async function GET(req: NextRequest) {
+  const session = await requireAdmin(req);
+  if (!session) return unauthorized();
+
+  await connectDB();
+  const programId = req.nextUrl.searchParams.get("program");
+  const query = programId ? { program: programId } : {};
+
+  const placements = await Placement.find(query)
+    .populate({
+      path: "program",
+      populate: { path: "course", populate: { path: "college", select: "name" } },
+    })
+    .sort({ academicYear: -1 })
+    .lean();
+
+  return NextResponse.json({ data: placements });
+}
+
+// POST /api/admin-portal/placements
 export async function POST(req: NextRequest) {
   const session = await requireAdmin(req);
   if (!session) return unauthorized();

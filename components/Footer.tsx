@@ -13,7 +13,7 @@ export default function Footer() {
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 md:grid-cols-3">
         {/* Brand */}
         <div>
-          <p className="text-xl font-bold text-white">CampusPath</p>
+          <p className="text-xl font-bold text-white">CareerKey</p>
           <p className="mt-3 max-w-xs text-sm">
             College guides for students and parents, with a counsellor a phone
             call away.
@@ -50,7 +50,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-white/10 py-4 text-center text-xs text-white/60">
-        &copy; CampusPath. All rights reserved.
+        &copy; {new Date().getFullYear()} CareerKey. All rights reserved.
       </div>
     </footer>
   );

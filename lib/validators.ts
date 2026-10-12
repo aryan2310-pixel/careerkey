@@ -47,17 +47,18 @@ export const collegeQuerySchema = z.object({
 });
 
 // ---------- Course ----------
-export const courseCreateSchema = z
-  .object({
-    college: objectId,
-    name: text(100),
-    slug,
-    level: z.enum(COURSE_LEVELS).optional(),
-    durationYears: z.number().int().min(1).max(10).optional(),
-    eligibility: text(500).optional(),
-    entranceExams: z.array(text(50)).default([]),
-  })
-  .strict();
+const courseBase = z.object({
+  college: objectId,
+  name: text(100),
+  slug,
+  level: z.enum(COURSE_LEVELS).optional(),
+  durationYears: z.number().int().min(1).max(10).optional(),
+  eligibility: text(500).optional(),
+  entranceExams: z.array(text(50)).default([]),
+});
+
+export const courseCreateSchema = courseBase.strict();
+export const courseUpdateSchema = courseBase.partial().strict();
 
 export const courseQuerySchema = z.object({
   level: z.enum(COURSE_LEVELS).optional(),
@@ -69,29 +70,31 @@ export const courseQuerySchema = z.object({
 
 
 // ---------- Program ----------
-export const programCreateSchema = z
-  .object({
-    course: objectId,
-    name: text(200),
-    shortName: text(30).optional(),
-    slug,
-    seats: z.number().int().min(0).optional(),
-    accreditation: text(100).optional(),
-  })
-  .strict();
+const programBase = z.object({
+  course: objectId,
+  name: text(200),
+  shortName: text(30).optional(),
+  slug,
+  seats: z.number().int().min(0).optional(),
+  accreditation: text(100).optional(),
+});
+
+export const programCreateSchema = programBase.strict();
+export const programUpdateSchema = programBase.partial().strict();
 
 // ---------- Placement ----------
-export const placementCreateSchema = z
-  .object({
-    program: objectId,
-    academicYear,
-    studentsEligible: z.number().int().min(0).optional(),
-    studentsPlaced: z.number().int().min(0).optional(),
-    highestPackageLPA: z.number().min(0).optional(),
-    averagePackageLPA: z.number().min(0).optional(),
-    medianPackageLPA: z.number().min(0).optional(),
-    topRecruiters: z.array(text(100)).default([]),
-  })
+const placementBase = z.object({
+  program: objectId,
+  academicYear,
+  studentsEligible: z.number().int().min(0).optional(),
+  studentsPlaced: z.number().int().min(0).optional(),
+  highestPackageLPA: z.number().min(0).optional(),
+  averagePackageLPA: z.number().min(0).optional(),
+  medianPackageLPA: z.number().min(0).optional(),
+  topRecruiters: z.array(text(100)).default([]),
+});
+
+export const placementCreateSchema = placementBase
   .strict()
   .refine(
     (d) =>
@@ -100,6 +103,8 @@ export const placementCreateSchema = z
       d.studentsPlaced <= d.studentsEligible,
     { message: "studentsPlaced cannot exceed studentsEligible", path: ["studentsPlaced"] }
   );
+
+export const placementUpdateSchema = placementBase.partial().strict();
 
 // ---------- FeeStructure ----------
 const feeItemSchema = z
@@ -111,23 +116,38 @@ const feeItemSchema = z
   })
   .strict();
 
-export const feeStructureCreateSchema = z
-  .object({
-    course: objectId,
-    academicYear,
-    currency: z.string().trim().length(3).toUpperCase().default("INR"),
-    tuitionPerYear: z.number().min(0).optional(),
-    totalCourseFee: z.number().min(0).optional(),
-    items: z.array(feeItemSchema).default([]),
-    notes: text(1000).optional(),
-  })
-  .strict();
+const feeStructureBase = z.object({
+  course: objectId,
+  academicYear,
+  currency: z.string().trim().length(3).toUpperCase().default("INR"),
+  tuitionPerYear: z.number().min(0).optional(),
+  totalCourseFee: z.number().min(0).optional(),
+  items: z.array(feeItemSchema).default([]),
+  notes: text(1000).optional(),
+});
+
+export const feeStructureCreateSchema = feeStructureBase.strict();
+export const feeStructureUpdateSchema = feeStructureBase.partial().strict();
 
 // ---------- Infrastructure ----------
-export const infrastructureCreateSchema = z
-  .object({
-    college: objectId,
-    title: text(120),
-    description: text(3000),
-  })
-  .strict();
+const infrastructureBase = z.object({
+  college: objectId,
+  title: text(120),
+  description: text(3000),
+});
+
+export const infrastructureCreateSchema = infrastructureBase.strict();
+export const infrastructureUpdateSchema = infrastructureBase.partial().strict();
+
+// ---------- Insight ----------
+const insightBase = z.object({
+  title: text(200),
+  slug,
+  tag: text(50),
+  readTime: text(50).optional(),
+  summary: text(1000),
+  content: z.string().trim().min(1),
+});
+
+export const insightCreateSchema = insightBase.strict();
+export const insightUpdateSchema = insightBase.partial().strict();

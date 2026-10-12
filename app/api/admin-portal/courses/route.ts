@@ -5,6 +5,24 @@ import { requireAdmin, unauthorized } from "@/lib/auth";
 import { parseBody } from "@/lib/validate";
 import { courseCreateSchema } from "@/lib/validators";
 
+// GET /api/admin-portal/courses
+export async function GET(req: NextRequest) {
+  const session = await requireAdmin(req);
+  if (!session) return unauthorized();
+
+  await connectDB();
+  const collegeId = req.nextUrl.searchParams.get("college");
+  const query = collegeId ? { college: collegeId } : {};
+
+  const courses = await Course.find(query)
+    .populate("college", "name slug")
+    .sort({ name: 1 })
+    .lean();
+
+  return NextResponse.json({ data: courses });
+}
+
+// POST /api/admin-portal/courses
 export async function POST(req: NextRequest) {
   const session = await requireAdmin(req);
   if (!session) return unauthorized();
