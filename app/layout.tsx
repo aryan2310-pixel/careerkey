@@ -7,13 +7,13 @@ const SITE_NAME = "CareerKey";
 const figtree = Figtree({
   subsets: ["latin"],
   variable: "--font-figtree",
-  display: "swap",
+  display: "optional",
 });
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--font-bricolage",
-  display: "swap",
+  display: "optional",
 });
 
 export const metadata: Metadata = {

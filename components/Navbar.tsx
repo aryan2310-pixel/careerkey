@@ -51,22 +51,16 @@ export default function Navbar() {
         className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8"
       >
         {/* Brand Logo */}
-        <motion.div
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          transition={{ type: "spring", stiffness: 400, damping: 20 }}
+        <Link
+          href="/"
+          onClick={() => setIsOpen(false)}
+          className="flex items-center gap-2 text-xl font-bold tracking-tight text-ink transition-transform duration-150 hover:scale-[1.03] active:scale-[0.97]"
         >
-          <Link
-            href="/"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-2 text-xl font-bold tracking-tight text-ink"
-          >
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-xs font-bold text-white shadow-sm">
-              CK
-            </span>
-            <span>CareerKey</span>
-          </Link>
-        </motion.div>
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-xs font-bold text-white shadow-sm">
+            CK
+          </span>
+          <span>CareerKey</span>
+        </Link>
 
         {/* Desktop Navigation Links */}
         <ul className="hidden items-center gap-1 md:flex lg:gap-2">
@@ -76,22 +70,16 @@ export default function Navbar() {
 
             return (
               <li key={link.href}>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                <Link
+                  href={link.href}
+                  className={`inline-block rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150 hover:scale-105 active:scale-95 ${
+                    isActive
+                      ? "bg-brand-soft font-semibold text-brand"
+                      : "text-muted hover:bg-slate-50 hover:text-brand"
+                  }`}
                 >
-                  <Link
-                    href={link.href}
-                    className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                      isActive
-                        ? "bg-brand-soft font-semibold text-brand"
-                        : "text-muted hover:bg-slate-50 hover:text-brand"
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                </motion.div>
+                  {link.label}
+                </Link>
               </li>
             );
           })}
@@ -100,19 +88,14 @@ export default function Navbar() {
         {/* Right Actions: CTA + Mobile Hamburger */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* CTA (Visible on tablet & desktop) */}
-          <motion.div
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 400, damping: 20 }}
-            className="hidden sm:block"
-          >
+          <div className="hidden sm:block">
             <Link
               href="/book-counselling"
-              className="inline-flex items-center justify-center rounded-lg bg-go px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-go-dark"
+              className="inline-flex items-center justify-center rounded-lg bg-go px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-go-dark hover:scale-105 active:scale-95"
             >
               Book counselling
             </Link>
-          </motion.div>
+          </div>
 
           {/* Mobile Menu Hamburger Toggle */}
           <button
